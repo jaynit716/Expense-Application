@@ -1,0 +1,112 @@
+<div class="container">
+    <!-- Expense menu -->
+    <div class="row" style="margin-top:12px;">
+      <div class="col-md-8">
+        <input type="text"
+              [(ngModel)]="searchText"
+               class="form-control"
+               style="width: 100%;"
+               placeholder="Search expenses by name..">
+      </div>
+      <div class="col-md-4">
+        <button type="button"
+                (click)="createNewStore()"
+                class="btn btn-info pull-right"
+                style="margin-left:12px;"><i class="fa fa-plus"></i> New Store
+        </button>
+        <button type="button"
+                (click)="createNewExpense(selectedStore.sId)"
+                [disabled]="selectedStore == null"
+                class="btn btn-warning pull-right"
+                style="margin-left:12px;"><i class="fa fa-plus"></i> New Expense
+        </button>
+      </div>
+  
+    </div>
+  
+    <!-- Expense content -->
+    <div class="row" style="margin-top: 28px;">
+      <!-- Stores Menu -->
+      <div class="col-md-3">
+        <br>
+        <div class="list-group list-group-flush">
+          <a (click)="getAllExpenses()" class="list-group-item list-group-item-action">
+            <i class="fa fa-book"></i>&nbsp;All
+          </a>
+          <!-- Stores List -->
+          <a *ngFor="let store of stores" (click)="getSelectedStore(store)" class="list-group-item list-group-item-action">
+            <i class="fa fa-book"></i>&nbsp;
+           <input [(ngModel)]="store.name" (change)="updateStore(store.sId,store)" type="text" class="input-label" style="width: 60%"/>
+            <a (click)="deleteStore(store.sId)" class="pull-right text-danger">
+              <i class="fa fa-trash-o"></i>&nbsp;
+            </a>
+            <a (click)="toggleCollapsed()" >
+                <i class="dropdown-toggle"></i>
+            </a>
+            <div *ngIf="!isCollapsed">
+              <input [(ngModel)]="store.city" (change)="updateStore(store.sId,store)" type="text" class="input-label" style="width: 60%"/>
+            </div>
+          </a> 
+        </div>
+      </div>
+  
+      <!-- Notes Panel -->
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- Message if there are no notes -->
+            <h3 *ngIf="selectedStore != null">{{selectedStore.name}}</h3>
+            <h3 *ngIf="selectedStore == null">All Expenses</h3>
+            <p *ngIf="this.expenses.length === 0">There are no notes to display in this notebook :(</p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Note list -->
+          <div *ngFor="let expense of expenses | searchFilter:searchText" class="card bg-warning" style="border: 4px solid white;width: 250px;
+          height: 200px;">
+              <div class="card-body" style="padding: 8px; margin-top: 8px;">
+                  <div>
+                  <label style="width:25%">Name:</label>  
+                  <input type="text"
+                        [(ngModel)]="expense.name"
+                        (change)="updateExpense(expense.id,expense,expense.store.sId)"
+                        class="input-label-lg"
+                        maxlength="18" style="width:65%"
+                  />
+                  <a (click)="deleteExpense(expense.id,expense.store.sId)" class="pull-right text-danger">
+                    <i class="fa fa-trash-o"></i>
+                  </a>
+                  </div>
+                  <div>
+                   <label style="width:25%">Cost($):</label>            
+                   <input type="text"
+                        [(ngModel)]="expense.cost"
+                        (change)="updateExpense(expense.id,expense,expense.store.sId)"
+                        class="input-label-lg"
+                        maxlength="18" style="width:75%"
+                    />
+                    <label style="width:25%">Store:</label>
+                    <select class="input-label-lg" [(ngModel)]="expense.store.sId"  (change)="updateExpense(expense.id,expense,expense.store.sId)" name="storeDropdown">
+                      <option *ngFor="let s of stores" [value]="s.sId">{{s.name}}</option>
+                    </select>
+                    <!-- <input type="text"
+                        [(ngModel)]="expense.store.name"
+                        (change)="updateExpense(expense.id,expense,expense.store.sId)"
+                        class="input-label-lg"
+                        maxlength="18" style="width:75%"
+                    /> -->
+                  </div>
+              </div>
+          </div>
+
+
+         <!--  <app-note *ngFor="let n of notes | noteTextFilter:searchText"
+                    [note]="n"
+                    (noteUpdated)="updateNote($event)"
+                    (noteDeleted)="deleteNote($event)">
+          </app-note> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
